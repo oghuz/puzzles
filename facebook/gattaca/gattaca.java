@@ -8,6 +8,10 @@ import java.util.Collections;
 public class gattaca {
 
 	public static final ArrayList<Gene> geneList = new ArrayList<Gene>();
+	
+	/*weighted interval scheduling problem 
+	 * Dynamic Programming
+	 * The unweighted version is optimal under Greedy Selection.*/ 
 
 	public static void main(String[] args) throws IOException {
 		readinput(args[0]);
