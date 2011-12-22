@@ -4,7 +4,6 @@ import sys
 
 """ KDTree implementation for the Facebook puzzle "It's a small world".
     Most part of the code are borrowed from google code entry "KDTree.py" and fixed small bug in the program
-    author: ablimit aji
 """
 
 def square_distance(pointA, pointB):
