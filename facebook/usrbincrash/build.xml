@@ -1,0 +1,6 @@
+<project>
+    <property name="keyword" value="usrbincrash"/>
+    <javac srcdir="." destdir="." includeantruntime="false"/>
+    <echo message="java -server -Xmx1024M ${keyword} $*" file="${keyword}"/>
+    <chmod file="${keyword}" perm="a+x"/>
+</project>

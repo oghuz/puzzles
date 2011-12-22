@@ -1,0 +1,6 @@
+<project>
+    <property name="keyword" value="breathalyzer"/>
+    <javac srcdir="." destdir="." includeantruntime="false"/>
+    <echo message="java -server -Xmx1024M -Xms512M ${keyword} $*" file="${keyword}"/>
+    <chmod file="${keyword}" perm="a+x"/>
+</project>
