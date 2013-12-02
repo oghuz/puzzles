@@ -1,0 +1,22 @@
+synt on
+set nu
+set ai
+set si
+set hlsearch
+set backspace=2
+set nocompatible
+map <f5> :tabnew
+map <f6> gT
+map <f7> gt
+filetype on
+filetype plugin indent on
+noremap % v%
+
+au BufNewFile,BufRead *.cu set ft=cu
+au BufNewFile,BufRead *.cuh set ft=cu
+
+" au BufNewFile,BufRead *.cpp set ft=cpp
+" au BufNewFile,BufRead *.cc set ft=cpp
+" au BufNewFile,BufRead *.c set ft=cpp
+
+" au BufNewFile,BufRead *.py set ft=python
