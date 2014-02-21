@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script prints a message about your weight if you give it your
 # weight in kilos and height in centimeters.
