@@ -61,11 +61,11 @@ def dijkstra(graph, source, target):
 
 def mars_rover(graph, source, target):
     """
-    I reduced the mars_rover problem to a graph problem in which 
+    Reduced the mars_rover problem to a graph problem in which 
     shortest path between source and target represents the sequence of image
     snapshos that need to be downloaded.
     vertex represents the starting and end point of image segments
-    edge represtens the transmission cost
+    edge represtens the transmission cost.
     """
     dist, pred = dijkstra(graph, source, target)
     if target in dist:
