@@ -2,10 +2,15 @@
 CC=gcc -std=gnu99 -Wall -O3
 LIBS=-lm -lrt
 
-default: program
+default: reverseList maxSum christmasTree
 
-program: reversing.a.list.c
+reverseList: reversing.a.list.c
 	$(CC) -o $@ $<
 
+maxSum: maxsubarray.c
+	$(CC) -o $@ $<
+
+christmasTree: binary.tree.connect.level.c
+	$(CC) -o $@ $<
 clean:
-	rm -f program 
+	rm -f reverseList maxSum
