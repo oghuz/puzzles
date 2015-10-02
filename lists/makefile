@@ -11,6 +11,7 @@ maxSum: maxsubarray.c
 	$(CC) -o $@ $<
 
 christmasTree: binary.tree.connect.level.c
-	$(CC) -o $@ $<
+	$(CC) -g -o $@ $<
+
 clean:
-	rm -f reverseList maxSum
+	rm -f reverseList maxSum christmasTree
