@@ -1,5 +1,5 @@
 
-CC=gcc -std=gnu99 -Wall -O3
+CC=gcc -std=gnu99 -Wall -O2
 LIBS=-lm -lrt
 
 default: MinCoin
