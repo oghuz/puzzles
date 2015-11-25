@@ -60,9 +60,11 @@ int minCoin(int N, int *coins, int len) {
 
   //checkTable(N,table,coins,len);
 
-  freeTable(N,table,len);
+  i = getMinCount(N,table,len);
   
-  return getMinCount(N,table,len);
+  freeTable(N,table,len);
+
+  return i; 
 }
 
 //recursive solution 
