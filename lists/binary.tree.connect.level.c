@@ -158,7 +158,7 @@ void connectByLevel(node* t)
     return;
   t->cousin = NULL; // special case for root
 
-  while (t != NULL) { // set cousin of all levels one by one
+  while (t != NULL) {
     node *n = t;
     while (n != NULL)
     {
@@ -170,7 +170,6 @@ void connectByLevel(node* t)
 
       n= n->cousin;
     }
-
     // t = (t->left !=NULL) ? t->left : (t->right != NULL ? t= t->right : getNN(t));
     if (t->left != NULL){
       t = t->left;
