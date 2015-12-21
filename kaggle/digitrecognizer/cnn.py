@@ -13,6 +13,7 @@ def CNN(n_epochs):
             ('conv1', layers.Conv2DLayer),      #Convolutional layer.  Params defined below
             ('pool1', layers.MaxPool2DLayer),   # Like downsampling, for execution speed
             ('conv2', layers.Conv2DLayer),
+            ('pool2', layers.MaxPool2DLayer),
             ('hidden3', layers.DenseLayer),
             ('output', layers.DenseLayer),
         ],
