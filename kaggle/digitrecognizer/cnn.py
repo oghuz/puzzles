@@ -121,6 +121,7 @@ def CNN6(n_epochs):
         max_epochs=n_epochs,
         verbose=1,
     )
+    return net6
 
 def CNN(n_epochs):
     net1 = NeuralNet(
