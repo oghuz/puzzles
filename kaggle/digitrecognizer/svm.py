@@ -13,11 +13,11 @@ def main():
     test = genfromtxt(open('./input/test.csv','r'), delimiter=',', dtype='f8')[1:]
     
     #create and train the random forest
-    machine = svm.SVC(decision_function_shape='ovo')
+    machine = svm.SVC(verbose=True, decision_function_shape='ovo')
     machine.fit(train, target)
+    pred = machine.predict(test)
+    savetxt('submissions/svm.csv', np.c_[range(1,len(test)+1), pred], delimiter=',', header = 'ImageId,Label', comments = '', fmt='%d')
 
-    savetxt('output/svm.csv', machine.predict(test), delimiter=',', header =
-            'ImageId,Label', fmt='%f')
 
 if __name__=="__main__":
     main()

@@ -16,7 +16,7 @@ def main():
     rf.fit(train, target)
 
     #savetxt('Data/submission2.csv', rf.predict(test), delimiter=',', fmt='%f')
-    savetxt('output/submission_rand_forest.csv', np.c_[range(1,len(test)+1),pred], delimiter=',', header = 'ImageId,Label', comments = '', fmt='%d')
+    savetxt('submissions/randomForest.csv', np.c_[range(1,len(test)+1),rf.predict(test)], delimiter=',', header = 'ImageId,Label', comments = '', fmt='%d')
 
 if __name__=="__main__":
     main()
