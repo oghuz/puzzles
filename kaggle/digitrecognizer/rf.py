@@ -1,5 +1,6 @@
 #! /usr/bin/python
 
+import numpy as np
 
 from sklearn.ensemble import RandomForestClassifier
 from numpy import genfromtxt, savetxt
