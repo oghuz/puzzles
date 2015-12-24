@@ -13,7 +13,7 @@ def main():
     test = genfromtxt(open('./input/test.csv','r'), delimiter=',', dtype='f8')[1:]
     
     #create and train the random forest
-    rf = RandomForestClassifier(n_estimators=100, n_jobs=8)
+    rf = RandomForestClassifier(n_estimators=100, n_jobs=80)
     rf.fit(train, target)
 
     #savetxt('Data/submission2.csv', rf.predict(test), delimiter=',', fmt='%f')
