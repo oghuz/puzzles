@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/local/bin/python
 
 import lasagne
 import numpy as np 
@@ -176,13 +176,12 @@ def CNN(n_epochs):
         ],
 
       input_shape=(None, 1, 28, 28),
-      conv1_num_filters=7, 
+      conv1_num_filters=32, 
       conv1_filter_size=(3, 3), 
       conv1_nonlinearity=lasagne.nonlinearities.rectify,
-
       pool1_pool_size=(2, 2),
 
-      conv2_num_filters=12, 
+      conv2_num_filters=64, 
       conv2_filter_size=(2, 2),    
       conv2_nonlinearity=lasagne.nonlinearities.rectify,
 
