@@ -34,11 +34,9 @@ class AdjustVariable(object):
     def __call__(self, nn, train_history):
         if self.ls is None:
             self.ls = np.linspace(self.start, self.stop, nn.max_epochs)
-            epoch = train_history[-1]['epoch']
-            new_value = float32(self.ls[epoch - 1])
-            getattr(nn, self.name).set_value(new_value)
-
-
+        epoch = train_history[-1]['epoch']
+        new_value = float32(self.ls[epoch - 1])
+        getattr(nn, self.name).set_value(new_value)
 
 def regularization_objective(layers, lambda1=0., lambda2=0., *args, **kwargs):
     # default loss
@@ -54,6 +52,33 @@ def regularization_objective(layers, lambda1=0., lambda2=0., *args, **kwargs):
     losses += lambda1 * sum_abs_weights + lambda2 * sum_squared_weights
     return losses
 
+def simpleCNN():
+    layers0 = [
+        # layer dealing with the input data
+        (InputLayer, {'shape': (None, 1,28,28)}),
+
+        # first stage of our convolutional layers
+        (Conv2DLayer, {'num_filters': 16, 'filter_size': 2}),
+        (DenseLayer, {'num_units': 64}),
+
+        # the output layer
+        (DenseLayer, {'num_units': 10, 'nonlinearity': softmax}),
+    ]
+
+    net0 = NeuralNet(
+        layers=layers0,
+        update=nesterov_momentum,
+        update_learning_rate = theano.shared(float32(0.01)),
+        update_momentum = theano.shared(float32(0.9)),
+        on_epoch_finished=[
+            AdjustVariable('update_learning_rate', start=0.03, stop=0.0001),
+            AdjustVariable('update_momentum', start=0.9, stop=0.999),
+        ],
+
+        verbose=1,
+    )
+    return net0
+
 def CNN0(n_epochs):
     layers0 = [
         # layer dealing with the input data
@@ -61,20 +86,16 @@ def CNN0(n_epochs):
 
         # first stage of our convolutional layers
         (Conv2DLayer, {'num_filters': 96, 'filter_size': 5}),
-        (Conv2DLayer, {'num_filters': 96, 'filter_size': 3}),
-        (Conv2DLayer, {'num_filters': 96, 'filter_size': 3}),
-        (Conv2DLayer, {'num_filters': 96, 'filter_size': 3}),
-        (Conv2DLayer, {'num_filters': 96, 'filter_size': 3}),
         (MaxPool2DLayer, {'pool_size': 2}),
+        (Conv2DLayer, {'num_filters': 96, 'filter_size': 3}),
 
         # second stage of our convolutional layers
         (Conv2DLayer, {'num_filters': 128, 'filter_size': 3}),
-        (Conv2DLayer, {'num_filters': 128, 'filter_size': 3}),
-        (Conv2DLayer, {'num_filters': 128, 'filter_size': 3}),
         (MaxPool2DLayer, {'pool_size': 2}),
+        (Conv2DLayer, {'num_filters': 128, 'filter_size': 3}),
 
         # two dense layers with dropout
-        (DenseLayer, {'num_units': 64}),
+        (DenseLayer, {'num_units': 128}),
         (DropoutLayer, {}),
         (DenseLayer, {'num_units': 64}),
 
@@ -91,8 +112,6 @@ def CNN0(n_epochs):
 
         objective=regularization_objective,
         objective_lambda2=0.0025,
-
-        train_split=TrainSplit(eval_size=0.25),
         verbose=1,
     )
     return net0
@@ -178,7 +197,8 @@ def main():
     train,target,test = load()
 
     print "Training DeepNet .. "    
-    cnn = CNN(10).fit(train,target)
+    #cnn = CNN0(10).fit(train,target)
+    cnn = simpleCNN().fit(train,target)
 
     print "Predicting Labels .. "    
     pred = cnn.predict(test)
