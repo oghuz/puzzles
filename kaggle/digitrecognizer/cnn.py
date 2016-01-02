@@ -96,7 +96,6 @@ def CNN0(n_epochs):
 
         # two dense layers with dropout
         (DenseLayer, {'num_units': 128}),
-        (DropoutLayer, {}),
         (DenseLayer, {'num_units': 64}),
 
         # the output layer
@@ -107,7 +106,6 @@ def CNN0(n_epochs):
         layers=layers0,
         max_epochs=n_epochs,
 
-        update=adam,
         update_learning_rate=0.0002,
 
         objective=regularization_objective,
@@ -123,33 +121,34 @@ def CNN(n_epochs):
             ('input', layers.InputLayer),
             ('conv1', layers.Conv2DLayer),
             ('pool1', layers.MaxPool2DLayer),
-            ('dropout1', layers.DropoutLayer),  # !
             ('conv2', layers.Conv2DLayer),
-            ('pool2', layers.MaxPool2DLayer),
-            ('dropout2', layers.DropoutLayer),  # !
+            ('dropout1', layers.DropoutLayer),  # !
             ('conv3', layers.Conv2DLayer),
-            ('pool3', layers.MaxPool2DLayer),
-            ('dropout3', layers.DropoutLayer),  # !
+            ('pool2', layers.MaxPool2DLayer),
+            ('conv4', layers.Conv2DLayer),
+            ('dropout2', layers.DropoutLayer),  # !
             ('hidden4', layers.DenseLayer),
-            ('dropout4', layers.DropoutLayer),  # !
             ('hidden5', layers.DenseLayer),
             ('output', layers.DenseLayer),
         ],
         input_shape=(None, 1, 28, 28),
-        conv1_num_filters=32, conv1_filter_size=(3, 3), pool1_pool_size=(2, 2),
+        
+        conv1_num_filters=96, conv1_filter_size=(5,5),
+        pool1_pool_size=(2, 2),
+        conv2_num_filters=96, conv2_filter_size=(3, 3), 
         dropout1_p=0.1,  # !
-        conv2_num_filters=64, conv2_filter_size=(2, 2), pool2_pool_size=(2, 2),
-        dropout2_p=0.2,  # !
-        conv3_num_filters=128, conv3_filter_size=(2, 2), pool3_pool_size=(2, 2),
-        dropout3_p=0.3,  # !
-        hidden4_num_units=500,
-        dropout4_p=0.5,  # !
-        hidden5_num_units=500,
+        
+        conv3_num_filters=128, conv3_filter_size=(3, 3),
+        pool2_pool_size=(2, 2),
+        conv4_num_filters=128, conv4_filter_size=(3, 3), 
+        dropout2_p=0.1,  # !
+        
+        hidden4_num_units=128,
+        hidden5_num_units=64,
         output_num_units=10, 
         output_nonlinearity=lasagne.nonlinearities.softmax,
 
-        update = nesterov_momentum,
-        update_learning_rate = float32(0.01),
+        update_learning_rate = float32(0.001),
         update_momentum = float32(0.9),
         max_epochs=n_epochs,
         verbose=1,
@@ -202,7 +201,7 @@ def main():
 
     print "Predicting Labels .. "    
     pred = cnn.predict(test)
-    savetxt('submissions/cnn.csv', np.c_[range(1,len(test)+1),pred], delimiter=',', header = 'ImageId,Label', comments = '', fmt='%d')
+    savetxt('submissions/cnn.2conv.csv', np.c_[range(1,len(test)+1),pred], delimiter=',', header = 'ImageId,Label', comments = '', fmt='%d')
 
     print "Pickling DeepNet model.. "    
     dumpModel(cnn)
