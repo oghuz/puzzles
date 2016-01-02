@@ -104,12 +104,19 @@ def CNN0(n_epochs):
 
     net0 = NeuralNet(
         layers=layers0,
-        max_epochs=n_epochs,
-
-        update_learning_rate=0.0002,
-
+        
         objective=regularization_objective,
         objective_lambda2=0.0025,
+        
+        update=nesterov_momentum,
+        update_learning_rate = theano.shared(float32(0.01)),
+        update_momentum = theano.shared(float32(0.9)),
+        on_epoch_finished=[
+            AdjustVariable('update_learning_rate', start=0.03, stop=0.0001),
+            AdjustVariable('update_momentum', start=0.9, stop=0.999),
+        ],
+
+        max_epochs=n_epochs,
         verbose=1,
     )
     return net0
