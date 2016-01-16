@@ -174,9 +174,19 @@ def load():
     else:
         print "Reading input files .. "
         dataset = genfromtxt(open('./input/train.csv','r'), delimiter=',', dtype='uint8')[1:]
+        target = np.array([x[0] for x in dataset])
+        train = np.array([x[1:] for x in dataset])
+        
+        print "Augmenting training set .. "
+        from Augmentation import augment
+        print len(target)/2
+        train,target =augment(train,target,len(target)/2)
+        
         print "Transforming input files .. "
-        target = np.array([x[0] for x in dataset]).astype(np.uint8)
-        train = np.array([x[1:] for x in dataset]).reshape((-1, 1, 28, 28)).astype(np.float32)
+        target = target.astype(np.uint8)
+        train = train.reshape((-1, 1, 28, 28)).astype(np.float32)
+
+
         print "Dumping pickles .. "
         with open('./input/target.pickle', 'wb') as f:
             pickle.dump(target, f, -1)
@@ -201,10 +211,10 @@ def dumpModel(cnn):
 
 def main():
     train,target,test = load()
-
+    
     print "Training DeepNet .. "    
-    #cnn = CNN0(10).fit(train,target)
-    cnn = simpleCNN().fit(train,target)
+    cnn = CNN0(100).fit(train,target)
+    #cnn = simpleCNN().fit(train,target)
 
     print "Predicting Labels .. "    
     pred = cnn.predict(test)
