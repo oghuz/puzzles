@@ -2,11 +2,13 @@
 
 import sys
 
+#base case mapping
 mapping = {0:'zero', 1:'one', 2:'two', 3:'three', 4:'four', 5:'five', 6:'six', 7:'seven', 8:'eight', 9:'nine', \
            10:'ten', 11: 'eleven', 12:'twelve', 13:'thirteen', 14:'fourteen', 15:'fifteen', 16:'sixteen', \
            17:'seventeen', 18:'eighteen', 19:'nineteen', 20:'twenty', 30:'thirty', 40:'fourty', 50:'fifty', \
            60:'sixty', 70:'seventy', 80:'eighty', 90:'ninety', 1000:'thousand', 1000000:'million', 1000000000:'billion'}
 
+# conversion function for the resuable cases
 def simple_convert(number):
     global mapping
     if number ==0:
@@ -28,8 +30,21 @@ def simple_convert(number):
 
     return ' '.join(composition) 
 
+# a function that converts an arabic number (under a trillion) into English representation  
 def convert(number):
-    return simple_convert(number %1000)
+    factor = 1000000000
+    global mapping
+    composition = [] 
+    while factor >1:
+        if number/factor >0:
+            composition.append(simple_convert(number/factor))
+            composition.append(mapping[factor])
+        number %=factor
+        factor /=1000
+    
+    composition.append(simple_convert(number))
+    print composition
+    return ' '.join(composition) 
 
 def main():
     while True:
