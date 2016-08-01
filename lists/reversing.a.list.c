@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
   //inspect(list);
 
   label(list);
-  //inspect(list);
+  inspect(list);
   printf("test label %s\n", testme(list) ? "pass.": "fail.");
 
   list = reverse(list);
@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
   printf("test reverse %s\n", t ? "pass.": "fail.");
 
   list = reverseN(2, list);
-  //inspect(list);
+  inspect(list);
   list = reverseN(2, list);
   //inspect(list);
   t = testme(list);
