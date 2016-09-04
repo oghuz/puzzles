@@ -19,9 +19,9 @@ int main()
    print_bytes(&i, sizeof(int));
 
    if (*c)    
-       printf("Little endian");
+       printf("Little endian\n");
    else
-       printf("Big endian");
+       printf("Big endian\n");
    return 0;
 }
 

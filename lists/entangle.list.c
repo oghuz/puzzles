@@ -11,8 +11,6 @@ node;
 
 // testing and debugging code
 node *init(int N);
-int testme(node * list);
-int testlabel(node* list);
 void inspect(node * list);
 node *label(node *list);
 
@@ -23,7 +21,7 @@ void entangle(node *list);
 int main(int argc, char** argv) {
   int N = argc >1 ? atoi(argv[1]): 10;
 
-  printf("challenge accepted !\n); //Give me a number which indicates number of nodes on a list, otherwise I'll assume it's 10\n");
+  printf("challenge accepted !\n"); //Give me a number which indicates number of nodes on a list, otherwise I'll assume it's 10
   printf("-------------------------------------\n");
 
   node *list =  init(N);
@@ -85,36 +83,6 @@ node* reverse(node* list)
     nodes[1] = nodes[2];
   }
   return nodes[0];
-}
-
-int testlabel(node* list) {
-  int flag = 1; 
-  while (NULL != list)
-  {
-    if (list->data != 0){
-      flag =0;
-      printf("problem %d !\n", list->data);
-      break;
-    }
-    list = list->next;
-  }
-  return flag;
-}
-
-int testme(node* list) {
-  int flag = 1;
-  int i = 1 ; 
-  while (NULL != list)
-  {
-    if (list->data != i ){
-      flag = 0;
-      printf("problem %d -- %d!\n", i, list->data);
-      break;
-    }
-    list = list->next;
-    i++;
-  }
-  return flag; 
 }
 
 void inspect(node* list) {
