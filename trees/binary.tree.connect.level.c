@@ -1,21 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h> // INT_MAX
-
-typedef struct node
-{
-  int data;
-  struct node *left, *right, *cousin;
-} node;
-
-node *createNode(int data){
-  node * n = (node*)malloc(sizeof(node));
-  n->left = NULL; // points to last node 
-  n->right= NULL; // points to next node 
-  n->cousin = NULL; // points to the first node 
-  n->data = data; // holds info 
-  return n;
-}
+#include "bst.h"
 
 node *createQueue(){
   return createNode(-1);
