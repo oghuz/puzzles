@@ -13,10 +13,8 @@ def exhaustive(text, pattern, mapping, table):
     
     c = pattern[0]
     for word,remain in pairs:
-        if word in mapping:
-            symbol = mapping[word]
-            if symbol == c and exhaustive(remain,pattern[1:],mapping,table):
-                return True
+        if word in mapping and mapping[word] == c and exhaustive(remain,pattern[1:],mapping,table):
+            return True
         elif table[c]:
             mapping[word] = c
             table[c] = False
@@ -62,7 +60,7 @@ def match(text, pattern):
 def simple_test_case():
     cases = [("redgreenblue", "abc", True), ("redgreengreen", "xyz", True), ("redgreenblue", "xyy", False),("dogcatcat", "xyy", True)]
     for text,pattern,res in cases:
-        if match_space(text,pattern) != res:
+        if match_nospace(text,pattern) != res:
             print "Test [%s ---> %s] fails." % (text,pattern)
             return False
     return True
@@ -80,7 +78,7 @@ def main():
     text = sys.argv[1].strip()
     pattern = sys.argv[2].strip()
 
-    # simple_test_case()
+    simple_test_case()
     
     # if match(text, pattern):
     if match_nospace(text, pattern):
