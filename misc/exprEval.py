@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 
 import sys
+import unittest
 
-def doArthimetic(a,b,op):
+class State:
+    EVAL = 0
+    PROCESS = 1
+
+def doArthmetic(a,b,op):
     val =None
     if op == '*':
         val = a *b
@@ -16,49 +21,60 @@ def doArthimetic(a,b,op):
         val = None
     return val 
 
-def extractMulDiv(expression):
-    
-
 def exprEval(expression):
-    stack = []
-    op = '' 
+    val = None
+    num_stack = []
+    op_stack = []
+    state = State.PROCESS
+    
     for char in expression:
         if char == ' ':
             continue
-        elif char == '*' or char == '/' or char =='+' or char == '-':
-            op = char
-        else:
-            if len(stack) >0:
-                a = stack[-1]
+        elif char== '*' or char =='/':
+            op_stack.append(char)
+            state = State.EVAL
+        elif char== '+' or char =='-':
+            op_stack.append(char)
+            if len(op_stack) > 1:
+                state = State.EVAL
+        elif char >='0' and char <= '9':
+            if state == State.EVAL:
+                a = num_stack.pop()
                 b = int(char)
-                stack [-1] = doArthimetic(a,b,op)
+                op = op_stack.pop()
+                num_stack.append(doArthmetic(a,b,op))
+                state = State.PROCESS
             else:
-                stack.append(int(char)) 
-    return stack[-1] if len(stack) >0 else None
-    
-
-
-
-def main():
-    if len(sys.argv) <3:
-        print msg()
-        sys.exit(0)
-
-    text = sys.argv[1].strip()
-    pattern = sys.argv[2].strip()
-
-    simple_test_case()
-    
-    # if match(text, pattern):
-    if match_nospace(text, pattern):
-        print "Yes"
+                num_stack.append(int(char)) 
+        else:
+            continue
+    if len(op_stack)>0:
+        a = num_stack.pop()
+        b = num_stack.pop()
+        op= op_stack.pop()
+        val = doArthmetic(a,b,op)
     else:
-        print "No"
-print exprEval(' ')
-print exprEval('1')
-print exprEval('1 + 2 * 3')
-print exprEval('1 + 2 * 3 + 1')
+        val = num_stack.pop() if len(num_stack) else None
+    return val
+    
 
+class ExprEvalTest(unittest.TestCase):
+    def test_empty(self):
+        self.assertEqual(exprEval(' '),None)
+    
+    def test_singleNumber(self):
+        self.assertEqual(exprEval('1'),1)
+    
+    def test_simplePriority(self):
+        self.assertEqual(exprEval('1 +2 * 3'),7)
+    
+    def test_sameOperator(self):
+        self.assertEqual(exprEval('1*1/1*1/1'),1)
+        self.assertEqual(exprEval('1+1-1+1-1'),1)
+    
+    def test_complex(self):
+        self.assertEqual(exprEval('1*2 + 3*4 + 1'),15)
+   
 if __name__ == '__main__':
-    main()
+    unittest.main()
 
