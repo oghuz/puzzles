@@ -22,7 +22,7 @@ def memoized_lcs(x,y):
     n = len(x)
     m = len(y)
     cache = [[-1 for i in xrange(m) ] for j in xrange(n)]
-    # print lookup_lcs(len(x)-1,len(y)-1,cache,(x,y))
+    c = lookup_lcs(len(x)-1,len(y)-1,cache,(x,y))
     return cache
 
 def lcs(x,y):
