@@ -2,11 +2,11 @@
 
 class Node(object):
     def __init__(self, item=None, prev=None, next=None):
-        self.data = item
+        self.val = item
         self.prev = prev
         self.next = next
     def __str__(self):
-        str(data)
+        str(val)
 
 class DoublyLinkedList(object):
     def __init__(self):
@@ -15,7 +15,7 @@ class DoublyLinkedList(object):
         self.count = 0
 
     def append(self, node):
-        if head is None:
+        if self.head is None:
             self.head = node
         else:
             self.tail.next = node
@@ -24,31 +24,62 @@ class DoublyLinkedList(object):
         self.tail = node
         self.count +=1
     
-    def insertBefore(self, node):
-        pass
+    def insertBefore(self, node, pos):
+        pred = pos.prev
+        if pred is None:
+            self.head =node
+        else:
+            pred.next = node
+
+        node.prev = pred
+        node.next = pos
+        pos.prev = node
+
+    
+    def insertAfter(self, node, pos):
+        succ = pos.next
+        if succ is None:
+            self.tail = node
+        else:
+            succ.prev = node
+
+        node.next = succ
+        pos.next = node 
+        node.prev = pos
 
     def remove(self,node):
-        if node.prev:
-            node.prev.next = node.next
+        pred = node.prev
+        succ = node.next 
+        if pred is None:
+            self.head = succ
         else:
-            head = node.next
-            if head:
-                head.prev = None
-            else:
-                head = None
-                tail = None
-        if node.next:
-            node.next.prev = node.prev
+            pred.next = succ
+            node.prev = None
+
+        if succ is None:
+            if pred:
+                pred.next = None
+            self.tail = pred
         else:
-            tail = node.prev 
-            tail.next = None
+            succ.prev = pred
+            node.next = None
+        self.count -=1
+
 
     def search(self, key):
         node = self.head
         while node:
-            if node.data ==key:
+            if node.val ==key:
                 return node
         return None
+    
+    def getAll(self):
+        n = self.head
+        content = []
+        while n:
+            content.append(n.val)
+            n = n.next
+        return content
 
 
 
@@ -83,16 +114,72 @@ class LFUCache(object):
 # obj = LFUCache(capacity)
 # param_1 = obj.get(key)
 # obj.set(key,value)
+def same(l1,l2):
+    if len (l1) != len(l2):
+        return False
+    for i, item in enumerate(l1):
+        if item != l2[i]:
+            return False
+    return True
 
-def test_LFUCache():
-    cache = LFUCache(2)
-    assert cache.fizzBuzz(1) == ["1"]
-    assert cache.fizzBuzz(2) == ["1","2"]
-    assert cache.fizzBuzz(3) == ["1","2","Fizz"]
-    assert cache.fizzBuzz(4) == ["1","2","Fizz","4"]
-    assert cache.fizzBuzz(5) == ["1","2","Fizz","4", "Buzz"]
-    assert cache.fizzBuzz(15) == ["1","2","Fizz","4", "Buzz", "Fizz","7","8","Fizz","Buzz","11","Fizz","13","14","FizzBuzz"]
+def test_EmptyList():
+    temp = DoublyLinkedList()
+    assert same(temp.getAll(),[]) == True
+
+def test_RemoveSingleNodeList():
+    temp = DoublyLinkedList()
+    n = Node(99)
+    temp.append(n)
+    assert same(temp.getAll(),[99]) == True
+    assert temp.count == 1
+    temp.remove(n)
+    assert same(temp.getAll(),[]) == True
+    assert temp.head is None
+    assert temp.tail is None
+    assert temp.count == 0
+
+def test_Append():
+    temp = DoublyLinkedList()
+    nodes = [] 
+    for i in range(10):
+        nodes.append(Node(i))
+        temp.append(nodes[i])
+    assert same(temp.getAll(),[0,1,2,3,4,5,6,7,8,9]) == True
+    assert temp.count == 10
+
+def test_RemoveFromHead():
+    temp = DoublyLinkedList()
+    expected = [0,1,2,3,4,5,6,7,8,9]
+    nodes = [] 
+    for i in range(10):
+        nodes.append(Node(i))
+        temp.append(nodes[i])
+    
+    for i in range(10):
+        temp.remove(nodes[i])
+        assert same(temp.getAll(),expected[i+1:]) == True
+        print "Removed item %d" % i 
+    assert same(temp.getAll(),[]) == True
+
+def test_RemoveFromTail():
+    temp = DoublyLinkedList()
+    expected = [0,1,2,3,4,5,6,7,8,9]
+    nodes = [] 
+    for i in range(10):
+        nodes.append(Node(i))
+        temp.append(nodes[i])
+    
+    for i in range(9,-1,-1):
+        temp.remove(nodes[i])
+        assert same(temp.getAll(),expected[0:i]) == True
+        print "Removed item %d" % i 
+    assert same(temp.getAll(),[]) == True
+
 
 if __name__== '__main__':
-    cache = LFUCache()
-    cache.test_fizzBuzz()
+    temp = DoublyLinkedList()
+    nodes = [] 
+    for i in range(10):
+        nodes.append(Node(i))
+        temp.append(nodes[i])
+    temp.remove(nodes[0])
