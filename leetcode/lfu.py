@@ -82,7 +82,10 @@ class DoublyLinkedList(object):
         return content
 
 
-
+class CacheEntry(object):
+    Value = 0
+    Frequency = 1
+    Structure = 2
         
 class LFUCache(object):
     def __init__(self, capacity):
@@ -90,8 +93,12 @@ class LFUCache(object):
         
         :type capacity: int
         """
+        self.number_of_slots_available = capacity
         self.capacity = capacity
-        self.tree = BinaryHeap()
+        self.entries = {}
+        self.freqList = DoublyLinkedList()
+        self.freqNodeList = {}
+        self.freq_item = {}
         
 
     def get(self, key):
@@ -99,6 +106,9 @@ class LFUCache(object):
         :type key: int
         :rtype: int
         """
+        if key in self.entries:
+            return self.entries[key][CacheEntry.Value]
+        return -1
         
 
     def set(self, key, value):
@@ -107,6 +117,40 @@ class LFUCache(object):
         :type value: int
         :rtype: void
         """
+        if key in self.entries:
+            cache = self.entris[key][CacheEntry.Structure]
+            ref_count = self.freq[key][CacheEntry.Frequency] + 1
+            if ref_count in self.freq_item:
+                self.freq_item[ref_count-1].remove(cache)
+            else:
+                n = Node(ref_count)
+                self.freqNodeList[ref_count] = n
+                pos = self.freqNodeList[ref_count-1]
+                self.freqList.insertAfter(n,pos)
+                self.freq_item[ref_count]  = DoublyLinkedList()
+            
+            freq_item[ref_count].append(cache)
+            self.freq[key][CacheEntry.Frequency]  = ref_count
+        elif self.number_of_slots_available >0:
+            self.entries[key] = createCache(key,value)
+            ref_count = self.freq[key][CacheEntry.Frequency]
+            if 
+        else:
+            evict()
+
+    def createCache(self,key,value):
+        return [value,1,Node(key)]
+    
+    def createRefCounter(self,ref_count):
+        n = Node(ref_count)
+        self.freqNodeList[ref_count] = n
+        pos = self.freqNodeList[ref_count-1]
+        self.freqList.insertAfter(n,pos)
+        self.freq_item[ref_count]  = DoublyLinkedList()
+        pass
+
+    def evict(self):
+        pass
         
 
 
