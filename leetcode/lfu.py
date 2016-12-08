@@ -175,6 +175,32 @@ def test_RemoveFromTail():
         print "Removed item %d" % i 
     assert same(temp.getAll(),[]) == True
 
+def test_insertBefore():
+    temp = DoublyLinkedList()
+    node1 = Node(1)
+    node2 = Node(2)
+    node3 = Node(3)
+    
+    temp.append(node1)
+    assert same(temp.getAll(),[1]) == True
+    temp.insertBefore(node2,node1)
+    assert same(temp.getAll(),[2,1]) == True
+    temp.insertBefore(node3,node1)
+    assert same(temp.getAll(),[2,3,1]) == True
+    
+def test_insertAfter():
+    temp = DoublyLinkedList()
+    node1 = Node(1)
+    node2 = Node(2)
+    node3 = Node(3)
+    
+    temp.append(node1)
+    assert same(temp.getAll(),[1]) == True
+    temp.insertAfter(node2,node1)
+    assert same(temp.getAll(),[1,2]) == True
+    temp.insertAfter(node3,node1)
+    assert same(temp.getAll(),[1,3,2]) == True
+
 
 if __name__== '__main__':
     temp = DoublyLinkedList()
