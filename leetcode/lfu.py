@@ -23,6 +23,14 @@ class DoublyLinkedList(object):
         self.tail = None
         self.count = 0
 
+    def __str__(self):
+        n = self.head
+        content = []
+        while n:
+            content.append(str(n.data))
+            n = n.next
+        return "--".join(content)
+
     def hasItem(self):
         return self.count > 0
 
@@ -147,7 +155,11 @@ class LFUCache(object):
         if key in self.entries:
             cache = self.entries[key][CacheEntry.Structure]
             self.increaseReferenceCount(key,cache)
+            print "GET: key=%d, value=%d, slots=%d" %(key,self.entries[key][CacheEntry.Value],self.slots_available)
+            self.status()
             return self.entries[key][CacheEntry.Value]
+        print "GET: key=%d, value=%d" %(key,-1)
+        self.status()
         return -1
 
     def set(self, key, value):
@@ -156,16 +168,24 @@ class LFUCache(object):
         :type value: int
         :rtype: void
         """
+        print "SET: key=%d, value=%d, slots=%d" %(key,value,self.slots_available)
+        print self.entries
         if key in self.entries:
             self.entries[key][CacheEntry.Value] = value
         elif self.slots_available > 0:
-            self.createCacheEntry(key,value)
+            if not self.createCacheEntry(key,value):
+                return
         else:
-            self.evict()
+            k = self.evict()
+            if not key:
+                return
+
             self.createCacheEntry(key,value)
-        
-        cache = self.entries[key][CacheEntry.Structure]
-        self.increaseReferenceCount(key,cache)
+        if key in self.entries:
+            cache = self.entries[key][CacheEntry.Structure]
+            self.increaseReferenceCount(key,cache)
+
+        self.status()
 
 
     def createCacheEntry(self, key,value):
@@ -200,8 +220,19 @@ class LFUCache(object):
         self.entries[key][CacheEntry.Frequency] += 1
 
     def evict(self):
-        lfu_queue = self.freqList.getHead().getItem()
-        key = lfu_queue.removeLast().getItem()
-        self.entries.pop(key)
-        self.slots_available +=1
+        if self.freqList.hasItem():
+            lfu_queue = self.freqList.getHead().getItem()
+            key = lfu_queue.removeLast().getItem()
+            print "Evicted: %d" % key
+            self.entries.pop(key)
+            self.slots_available +=1
+            return key
+        return False
+
+    def status(self):
+        h = self.freqList.head
+        while h:
+            print h.getItem()
+            h = h.next
+        print "----------------------------------------------------------------\n"
 
