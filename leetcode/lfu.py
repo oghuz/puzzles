@@ -1,12 +1,21 @@
 #! /usr/bin/env python
 
+
 class Node(object):
     def __init__(self, item=None, prev=None, next=None):
-        self.val = item
+        self.data = item
         self.prev = prev
         self.next = next
+
     def __str__(self):
-        str(val)
+        str(self.data)
+
+    def getItem(self):
+        return self.data
+
+    def setItem(self,item):
+        self.data = item 
+
 
 class DoublyLinkedList(object):
     def __init__(self):
@@ -14,29 +23,48 @@ class DoublyLinkedList(object):
         self.tail = None
         self.count = 0
 
+    def hasItem(self):
+        return self.count > 0
+
     def append(self, node):
         if self.head is None:
             self.head = node
         else:
             self.tail.next = node
             node.prev = self.tail
-        
+
         self.tail = node
-        self.count +=1
+        self.count += 1
+
+    def move2Head(self, node):
+        if node is self.head:
+            return
+
+        self.remove(node)
+        self.insertBefore(node, self.head)
     
+    def insertAsHead(self, node):
+        self.insertBefore(node,self.head)
+
     def insertBefore(self, node, pos):
+        if pos is None:
+            self.append(node)
+            return
         pred = pos.prev
         if pred is None:
-            self.head =node
+            self.head = node
         else:
             pred.next = node
 
         node.prev = pred
         node.next = pos
         pos.prev = node
+        self.count +=1
 
-    
     def insertAfter(self, node, pos):
+        if pos is None:
+            self.append(node)
+            return
         succ = pos.next
         if succ is None:
             self.tail = node
@@ -44,12 +72,13 @@ class DoublyLinkedList(object):
             succ.prev = node
 
         node.next = succ
-        pos.next = node 
+        pos.next = node
         node.prev = pos
+        self.count += 1
 
-    def remove(self,node):
+    def remove(self, node):
         pred = node.prev
-        succ = node.next 
+        succ = node.next
         if pred is None:
             self.head = succ
         else:
@@ -63,21 +92,29 @@ class DoublyLinkedList(object):
         else:
             succ.prev = pred
             node.next = None
-        self.count -=1
+        self.count -= 1
 
+    def removeLast(self):
+        node = self.tail
+        self.remove(node)
+        return node
+        
+    
+    def getHead(self):
+        return self.head
 
     def search(self, key):
         node = self.head
         while node:
-            if node.val ==key:
+            if node.val == key:
                 return node
         return None
-    
+
     def getAll(self):
         n = self.head
         content = []
         while n:
-            content.append(n.val)
+            content.append(n.getItem())
             n = n.next
         return content
 
@@ -86,20 +123,21 @@ class CacheEntry(object):
     Value = 0
     Frequency = 1
     Structure = 2
-        
+
+
 class LFUCache(object):
     def __init__(self, capacity):
         """
-        
         :type capacity: int
         """
-        self.number_of_slots_available = capacity
+        self.slots_available = capacity
         self.capacity = capacity
         self.entries = {}
         self.freqList = DoublyLinkedList()
-        self.freqNodeList = {}
-        self.freq_item = {}
-        
+        # n = Node(0)
+        # self.freqList.append(n)
+        self.freqListDictionary = {}
+        self.freqGroup= {}
 
     def get(self, key):
         """
@@ -107,9 +145,10 @@ class LFUCache(object):
         :rtype: int
         """
         if key in self.entries:
+            cache = self.entries[key][CacheEntry.Structure]
+            self.increaseReferenceCount(key,cache)
             return self.entries[key][CacheEntry.Value]
         return -1
-        
 
     def set(self, key, value):
         """
@@ -118,138 +157,51 @@ class LFUCache(object):
         :rtype: void
         """
         if key in self.entries:
-            cache = self.entris[key][CacheEntry.Structure]
-            ref_count = self.freq[key][CacheEntry.Frequency] + 1
-            if ref_count in self.freq_item:
-                self.freq_item[ref_count-1].remove(cache)
-            else:
-                n = Node(ref_count)
-                self.freqNodeList[ref_count] = n
-                pos = self.freqNodeList[ref_count-1]
-                self.freqList.insertAfter(n,pos)
-                self.freq_item[ref_count]  = DoublyLinkedList()
-            
-            freq_item[ref_count].append(cache)
-            self.freq[key][CacheEntry.Frequency]  = ref_count
-        elif self.number_of_slots_available >0:
-            self.entries[key] = createCache(key,value)
-            ref_count = self.freq[key][CacheEntry.Frequency]
-            if 
+            self.entries[key][CacheEntry.Value] = value
+        elif self.slots_available > 0:
+            self.createCacheEntry(key,value)
         else:
-            evict()
+            self.evict()
+            self.createCacheEntry(key,value)
+        
+        cache = self.entries[key][CacheEntry.Structure]
+        self.increaseReferenceCount(key,cache)
 
-    def createCache(self,key,value):
-        return [value,1,Node(key)]
-    
-    def createRefCounter(self,ref_count):
-        n = Node(ref_count)
-        self.freqNodeList[ref_count] = n
-        pos = self.freqNodeList[ref_count-1]
-        self.freqList.insertAfter(n,pos)
-        self.freq_item[ref_count]  = DoublyLinkedList()
-        pass
+
+    def createCacheEntry(self, key,value):
+        if self.slots_available >0:
+            self.entries[key] = [value, 0, Node(key)]
+            self.slots_available -= 1
+            return True
+        return False
+
+    def increaseReferenceCount(self, key, cache):
+        refCount = self.entries[key][CacheEntry.Frequency]
+        new_refCount = refCount + 1
+        if new_refCount not in self.freqListDictionary:
+            itemList = DoublyLinkedList()
+            n = Node(item = itemList)
+            self.freqListDictionary[new_refCount] = n
+            if refCount>0:
+                pos = self.freqListDictionary[refCount] 
+                self.freqList.insertAfter(n,pos)
+            else:
+                self.freqList.insertAsHead(n)
+
+        if refCount >0:
+            node = self.freqListDictionary[refCount]
+            q1 = node.getItem()
+            q1.remove(cache)
+            if not q1.hasItem():
+                self.freqList.remove(node)
+
+        q2 = self.freqListDictionary[new_refCount].getItem()
+        q2.insertAsHead(cache)
+        self.entries[key][CacheEntry.Frequency] += 1
 
     def evict(self):
-        pass
-        
+        lfu_queue = self.freqList.getHead().getItem()
+        key = lfu_queue.removeLast().getItem()
+        self.entries.pop(key)
+        self.slots_available +=1
 
-
-# Your LFUCache object will be instantiated and called as such:
-# obj = LFUCache(capacity)
-# param_1 = obj.get(key)
-# obj.set(key,value)
-def same(l1,l2):
-    if len (l1) != len(l2):
-        return False
-    for i, item in enumerate(l1):
-        if item != l2[i]:
-            return False
-    return True
-
-def test_EmptyList():
-    temp = DoublyLinkedList()
-    assert same(temp.getAll(),[]) == True
-
-def test_RemoveSingleNodeList():
-    temp = DoublyLinkedList()
-    n = Node(99)
-    temp.append(n)
-    assert same(temp.getAll(),[99]) == True
-    assert temp.count == 1
-    temp.remove(n)
-    assert same(temp.getAll(),[]) == True
-    assert temp.head is None
-    assert temp.tail is None
-    assert temp.count == 0
-
-def test_Append():
-    temp = DoublyLinkedList()
-    nodes = [] 
-    for i in range(10):
-        nodes.append(Node(i))
-        temp.append(nodes[i])
-    assert same(temp.getAll(),[0,1,2,3,4,5,6,7,8,9]) == True
-    assert temp.count == 10
-
-def test_RemoveFromHead():
-    temp = DoublyLinkedList()
-    expected = [0,1,2,3,4,5,6,7,8,9]
-    nodes = [] 
-    for i in range(10):
-        nodes.append(Node(i))
-        temp.append(nodes[i])
-    
-    for i in range(10):
-        temp.remove(nodes[i])
-        assert same(temp.getAll(),expected[i+1:]) == True
-        print "Removed item %d" % i 
-    assert same(temp.getAll(),[]) == True
-
-def test_RemoveFromTail():
-    temp = DoublyLinkedList()
-    expected = [0,1,2,3,4,5,6,7,8,9]
-    nodes = [] 
-    for i in range(10):
-        nodes.append(Node(i))
-        temp.append(nodes[i])
-    
-    for i in range(9,-1,-1):
-        temp.remove(nodes[i])
-        assert same(temp.getAll(),expected[0:i]) == True
-        print "Removed item %d" % i 
-    assert same(temp.getAll(),[]) == True
-
-def test_insertBefore():
-    temp = DoublyLinkedList()
-    node1 = Node(1)
-    node2 = Node(2)
-    node3 = Node(3)
-    
-    temp.append(node1)
-    assert same(temp.getAll(),[1]) == True
-    temp.insertBefore(node2,node1)
-    assert same(temp.getAll(),[2,1]) == True
-    temp.insertBefore(node3,node1)
-    assert same(temp.getAll(),[2,3,1]) == True
-    
-def test_insertAfter():
-    temp = DoublyLinkedList()
-    node1 = Node(1)
-    node2 = Node(2)
-    node3 = Node(3)
-    
-    temp.append(node1)
-    assert same(temp.getAll(),[1]) == True
-    temp.insertAfter(node2,node1)
-    assert same(temp.getAll(),[1,2]) == True
-    temp.insertAfter(node3,node1)
-    assert same(temp.getAll(),[1,3,2]) == True
-
-
-if __name__== '__main__':
-    temp = DoublyLinkedList()
-    nodes = [] 
-    for i in range(10):
-        nodes.append(Node(i))
-        temp.append(nodes[i])
-    temp.remove(nodes[0])
