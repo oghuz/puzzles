@@ -27,9 +27,9 @@ class DoublyLinkedList(object):
         n = self.head
         content = []
         while n:
-            content.append(str(n.data))
+            content.append(str(n.getItem()))
             n = n.next
-        return "--".join(content)
+        return "-->".join(content)
 
     def hasItem(self):
         return self.count > 0
@@ -114,7 +114,7 @@ class DoublyLinkedList(object):
     def search(self, key):
         node = self.head
         while node:
-            if node.val == key:
+            if node.getItem() == key:
                 return node
         return None
 
@@ -155,11 +155,11 @@ class LFUCache(object):
         if key in self.entries:
             cache = self.entries[key][CacheEntry.Structure]
             self.increaseReferenceCount(key,cache)
-            print "GET: key=%d, value=%d, slots=%d" %(key,self.entries[key][CacheEntry.Value],self.slots_available)
+            # print "GET: key=%d, value=%d, slots=%d" %(key,self.entries[key][CacheEntry.Value], self.slots_available)
             self.status()
             return self.entries[key][CacheEntry.Value]
-        print "GET: key=%d, value=%d" %(key,-1)
-        self.status()
+        #print "GET: key=%d, value=%d" %(key,-1)
+        #self.status()
         return -1
 
     def set(self, key, value):
@@ -168,8 +168,8 @@ class LFUCache(object):
         :type value: int
         :rtype: void
         """
-        print "SET: key=%d, value=%d, slots=%d" %(key,value,self.slots_available)
-        print self.entries
+        #print "SET: key=%d, value=%d, slots=%d" %(key,value,self.slots_available)
+        #print self.entries
         if key in self.entries:
             self.entries[key][CacheEntry.Value] = value
         elif self.slots_available > 0:
@@ -185,7 +185,7 @@ class LFUCache(object):
             cache = self.entries[key][CacheEntry.Structure]
             self.increaseReferenceCount(key,cache)
 
-        self.status()
+        #self.status()
 
 
     def createCacheEntry(self, key,value):
@@ -202,8 +202,12 @@ class LFUCache(object):
             itemList = DoublyLinkedList()
             n = Node(item = itemList)
             self.freqListDictionary[new_refCount] = n
-            if refCount>0:
-                pos = self.freqListDictionary[refCount] 
+            if refCount > 0:
+                pos = self.freqListDictionary[refCount]
+                if key ==10:
+                    print "################"
+                    print pos.getItem()
+                    print "################"
                 self.freqList.insertAfter(n,pos)
             else:
                 self.freqList.insertAsHead(n)
@@ -214,6 +218,7 @@ class LFUCache(object):
             q1.remove(cache)
             if not q1.hasItem():
                 self.freqList.remove(node)
+                self.freqListDictionary.pop(refCount)
 
         q2 = self.freqListDictionary[new_refCount].getItem()
         q2.insertAsHead(cache)
@@ -228,11 +233,32 @@ class LFUCache(object):
             self.slots_available +=1
             return key
         return False
+    
+    def check(self):
+        for k in self.entries:
+            flag = False
+            h = self.freqList.head
+            while h:
+                if h.getItem().search(k) is not None:
+                    flag = True
+                    break
+                h = h.next
+            if not flag:
+                return False
+        return True
+
 
     def status(self):
+        print self.entries
         h = self.freqList.head
         while h:
-            print h.getItem()
+            key = None
+            for k,v in self.freqListDictionary.items():
+                if v is h:
+                    key = k
+                    break
+            print "[%d] : %s" % (key, h.getItem())
             h = h.next
+        print self.freqListDictionary.items()
         print "----------------------------------------------------------------\n"
 

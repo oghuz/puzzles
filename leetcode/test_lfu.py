@@ -69,6 +69,7 @@ def test_LFUCache_Complex():
             cache.set(key,value)
         else:
             continue
+        # assert cache.check() == True
 
 
 def same(l1, l2):
@@ -179,6 +180,16 @@ def test_move2Head():
         expected.insert(0, last_item)
         assert same(temp.getAll(), expected) == True
 
+def test_insertAsHead():
+    temp = DoublyLinkedList()
+    expected = range(10)
+    expected.reverse()
+    nodes = []
+    for i in range(10):
+        nodes.append(Node(i))
+        temp.insertAsHead(nodes[i])
+    
+    assert same(temp.getAll(), expected) == True
 
 def test_removeLast():
     temp = DoublyLinkedList()
