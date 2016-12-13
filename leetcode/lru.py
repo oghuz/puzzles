@@ -154,8 +154,8 @@ class LRUCache(object):
             cache = self.entries[key]
             self.updateCacheLine(key, cache)
             value = cache.getValue()
-        print "GET: key=%d, value=%d, slots=%d" % (key, value,self.slots_available)
-        self.status()
+        #print "GET: key=%d, value=%d, slots=%d" % (key, value,self.slots_available)
+        #self.status()
         return value
 
     def set(self, key, value):
@@ -164,7 +164,7 @@ class LRUCache(object):
         :type value: int
         :rtype: void
         """
-        print "SET: key=%d, value=%d, slots=%d" % (key, value,self.slots_available)
+        #print "SET: key=%d, value=%d, slots=%d" % (key, value,self.slots_available)
         cache = None
         if key in self.entries:
             cache = self.entries[key]
@@ -180,7 +180,7 @@ class LRUCache(object):
 
         if cache is not None:
             self.updateCacheLine(key, cache)
-        self.status()
+        # self.status()
 
     def createCacheEntry(self, key, value):
         if self.slots_available > 0:
