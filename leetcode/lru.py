@@ -21,6 +21,9 @@ class Node(object):
     def getValue(self):
         return self.value
 
+    def setValue(self, value):
+        self.value = value
+
 
 class DoublyLinkedList(object):
     def __init__(self):
