@@ -1,25 +1,20 @@
+import math
 
 class Solution(object):
-    def getFactors(self, n, usedFactors=None):
+    def getFactors(self, n, base=2):
         """
         :type n: int
         :rtype: List[List[int]]
         """
-        if usedFactors is None:
-            usedFactors = set()
         factorization = []
-        for i in xrange(2,n):
+        for i in xrange(base,int(math.sqrt(n))+1):
             if n % i ==0:
                 j = n/i
-                if j not in usedFactors:
-                    factorization.append([i,j])
-                    factors = self.getFactors(j,usedFactors)
-                    for factor in factors:
-                        combo = [i] + factor
-                        factorization.append(combo)
-                    usedFactors.add(i)
-                    usedFactors.add(j)
-
+                factorization.append([i,j])
+                factors = self.getFactors(j,i)
+                for factor in factors:
+                    combo = [i] + factor
+                    factorization.append(combo)
         return factorization
 
 
@@ -33,8 +28,8 @@ def same(l1, l2):
  
 def test_Factors():
     factor = Solution()
-    assert len(factor.getFactors(1)) == 0
-    assert len(factor.getFactors(37)) == 0
+    assert same(factor.getFactors(1), []) == True
+    assert same(factor.getFactors(37), []) == True
     expected = [[2, 6],[2, 2, 3],[3, 4]]
     calculated = factor.getFactors(12)
     for i,factorization in enumerate(expected):
